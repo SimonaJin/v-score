@@ -271,3 +271,23 @@ export default {
 	]
 }
 ```
+
+## 数据设计
+### 只评分
+```js
+id: 10842
+is_complete: 0
+is_option_random: 0
+is_required: 0
+title: "你有多大可能性将我们推荐给朋友?"
+type: "nps"
+high_legend: "非常愿意"
+low_legend: "肯定不会"
+max: 10
+min: 0
+rating_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+next_question_index: 0
+question_count: 4
+question_id: 10842
+
+```

@@ -1,17 +1,15 @@
 <template>
-  <div class='home'>home</div>
+  <div class="home">home</div>
 </template>
 
 <script>
 export default {
-  name: 'Home',
-  mounted () {
-    this.$alert({
-      message: '网络异常！',
-      duration: 2000,
-      position: 'middle',
-      className: 'big'
-    })
-  }
-}
+  name: "Home",
+  mounted() {
+    this.$scoreModal({
+      useId: "user1233", // 用户id
+      userKey: "1231238972837", // 
+    });
+  },
+};
 </script>

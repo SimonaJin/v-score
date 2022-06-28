@@ -1,14 +1,13 @@
 //axios 二次封装
 import axios from 'axios'
-
 class HttpRequest {
 	constructor() {
-		this.baseUrl = process.env.baseUrl
+		this.baseUrl = process.env.VUE_APP_API_BASE_URL
 		this.timeout = 30000;
 	}
 	seInterceptors(instance) {
 		//请求拦截
-		instance.interceptops.request.use(config => {
+		instance.interceptors.request.use(config => {
 			config.headers.common["Accept"] = "application/json";
 			config.headers.post["Content-Type"] = "application/x-www-form-urlencoded;charset=utf-8";
 			// 判断是否有token
@@ -17,7 +16,7 @@ class HttpRequest {
 			return Promise.reject(error.error)
 		})
 		//请求响应
-		instance.interceptops.response.use(res => {
+		instance.interceptors.response.use(res => {
 			//处理异常登录
 			if (res.data.retcode === 10) {
 				//清缓存
@@ -44,7 +43,7 @@ class HttpRequest {
 						err.response = '服务器出错'
 						break;
 					case 400:
-						err.response = '服务器出错'；
+						err.response = '服务器出错';
 						break;
 					default:
 				}

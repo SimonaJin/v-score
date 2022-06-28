@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve play/main.js",
+    "serve": "vue-cli-service serve",
     "prebuild": "rimraf ./dist",
     "build": "npm run prebuild &&  cross-env NODE_ENV=production rollup --config build/rollup.config.js",
     "build:es": "npm run prebuild && cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",

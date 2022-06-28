@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import router from './router'
 import App from './App.vue'
-import AlertBox from '../src/packages/alert/index.js'
+import ScoreModal from '../src/packages/scoreModal/index.js'
 
-Vue.prototype.$alert = AlertBox
+Vue.prototype.$scoreModal = ScoreModal
 Vue.config.productionTip = false
 
 new Vue({

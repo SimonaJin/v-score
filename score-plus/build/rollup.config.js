@@ -1,4 +1,3 @@
-import fs from 'fs'
 import path from 'path'
 import vue from 'rollup-plugin-vue'
 import alias from '@rollup/plugin-alias'
@@ -11,166 +10,161 @@ import babel from '@rollup/plugin-babel'
 import minimist from 'minimist'
 import postcss from 'rollup-plugin-postcss'
 import {
-  terser
+	terser
 } from 'rollup-plugin-terser'
 import typescript from 'rollup-plugin-typescript2'
+// 开启 ts 的类型声明文件打包
 const overrides = {
-	compilerOptions: {declaration: true},
-	exclude: ["tests/**/*.ts", "tests/**/*.tsx"]
+	compilerOptions: {
+		declaration: true
+	},
+	exclude: ['src/main.ts', 'node_modules', 'src/App.vue','play']
 }
 // Get browserslist config and remove ie from es build targets
-const esbrowserslist = fs.readFileSync('./.browserslistrc')
-  .toString()
-  .split('\n')
-  .filter((entry) => entry && entry.substring(0, 2) !== 'ie')
-
 // Extract babel preset-env config, to combine with esbrowserslist
-const babelPresetEnvConfig = require('../babel.config')
-  .presets.filter((entry) => entry[0] === '@babel/preset-env')[0][1]
-
 const argv = minimist(process.argv.slice(2))
 
 const projectRoot = path.resolve(__dirname, '..')
 
 const env = process.env.NODE_ENV
-
-const baseConfig = {
-  input: './src/packages/index.js',
-  plugins: {
-    preVue: [
-      alias({
-        entries: [{
-          find: '@',
-          replacement: `${path.resolve(projectRoot, 'src')}`
-        }]
-      })
-    ],
-    replace: {
-      'process.env.NODE_ENV': JSON.stringify(env),
-      preventAssignment: true
-    },
-		typescript:typescript({tsconfigOverride: overrides}),
-    vue: {
-      css: true,
-      template: {
-        isProduction: true
-      }
-    },
-    postVue: [
-      postcss({
-        extensions: ['.css', '.scss'],
-        extract: 'index.css'
-      }),
-      resolve({
-        extensions: ['.vue', '.js', '.jsx']
-      }),
-      commonjs()
-    ],
-    babel: {
-      exclude: 'node_modules/**',
-      extensions: ['.js', '.jsx', '.vue'],
-      babelHelpers: 'bundled'
-    }
-  }
-}
 const external = [
-  // list external dependencies, exactly the way it is written in the import statement.
-  // eg. 'jquery'
+	// list external dependencies, exactly the way it is written in the import statement.
+	// eg. 'jquery'
 ]
 const globals = {
-  // Provide global variable names to replace your external imports
-  // eg. jquery: '$'
+	// Provide global variable names to replace your external imports
+	// eg. jquery: '$'
 }
+const baseConfig = {
+	input: './src/packages/index.ts',
+	plugins: {
+		preVue: [
+			alias({
+				entries: [{
+					find: '@',
+					replacement: `${path.resolve(projectRoot, 'src')}`
+				}]
+			})
+		],
+		replace: {
+			'process.env.NODE_ENV': JSON.stringify(env),
+			preventAssignment: true
+		},
+		vue: {
+			css: true,
+			template: {
+				isProduction: true
+			}
+		},
+		resolve:resolve({
+			extensions: ['.vue', '.js', '.jsx', 'ts', 'tsx']
+		}),
+		typescript:typescript({
+			tsconfigOverride: overrides
+		}),
+		postVue: [
+			postcss({
+				extensions: ['.css', '.scss'],
+				extract: 'index.css'
+			})
+		],
+		babel: {
+			exclude: 'node_modules/**',
+			extensions: ['.js', '.jsx', '.vue', 'ts', 'tsx'],
+			babelHelpers: 'bundled'
+		}
+	}
+}
+
 const buildFormats = []
 // 判断不同打包模式
 // es
 if (!argv.format || argv.format === 'es') {
-  console.log('es')
-  const esConfig = {
-    ...baseConfig,
-    external,
-    output: {
-      file: 'dist/v-score-ui.esm.js',
-      format: 'esm',
-      exports: 'named',
-      sourcemap: false
-    },
-    plugins: [
-      replace(baseConfig.plugins.replace),
-      vue(baseConfig.plugins.vue),
-      ...baseConfig.plugins.postVue,
-      babel({
-        ...baseConfig.plugins.babel,
-        presets: [
-          [
-            '@babel/preset-env',
-            {
-              ...babelPresetEnvConfig,
-              targets: esbrowserslist
-            }
-          ]
-        ]
-      }),
-      terser()
-    ]
-  }
-  buildFormats.push(esConfig)
-  console.log(buildFormats.plugins)
+	console.log('es')
+	const esConfig = {
+		...baseConfig,
+		external,
+		output: {
+			file: 'dist/v-score-ui.esm.js',
+			format: 'esm',
+			exports: 'named',
+			sourcemap: false
+		},
+		plugins: [
+			baseConfig.plugins.resolve,
+			vue(baseConfig.plugins.vue),
+			baseConfig.plugins.typescript,
+			replace(baseConfig.plugins.replace),
+			...baseConfig.plugins.postVue,
+			babel({
+				...baseConfig.plugins.babel
+			}),
+			commonjs(),
+			terser()
+		]
+	}
+	buildFormats.push(esConfig)
 }
-// cjs
-if (!argv.format || argv.format === 'cjs') {
-  console.log('cjs')
-  const umdConfig = {
-    ...baseConfig,
-    external,
-    output: {
-      compact: true,
-      file: 'dist/v-score-ui.ssr.js',
-      format: 'cjs',
-      name: 'Vscore',
-      exports: 'auto',
-      globals
-    },
-    plugins: [
-      replace(baseConfig.plugins.replace),
-      ...baseConfig.plugins.preVue,
-      vue({
-        ...baseConfig.plugins.vue,
-        template: {
-          ...baseConfig.plugins.vue.template,
-          optimizeSSR: true
-        }
-      }),
-      ...baseConfig.plugins.postVue,
-      babel(baseConfig.plugins.babel),
-      terser()
-    ]
-  }
-  buildFormats.push(umdConfig)
+// umd
+if (!argv.format || argv.format === 'umd') {
+	console.log('umd')
+	const umdConfig = {
+		...baseConfig,
+		external,
+		output: {
+			file: 'dist/v-score-ui.umd.js',
+			format: 'umd',
+			name: 'Vscore',
+			exports: 'auto',
+			globals
+		},
+		plugins: [
+
+			baseConfig.plugins.resolve,
+			vue({
+				...baseConfig.plugins.vue,
+				template: {
+					...baseConfig.plugins.vue.template,
+					optimizeSSR: true
+				}
+			}),
+			baseConfig.plugins.typescript,
+			replace(baseConfig.plugins.replace),
+			...baseConfig.plugins.postVue,
+			babel(baseConfig.plugins.babel),
+			commonjs(),
+			terser()
+		]
+	}
+	console.log(umdConfig)
+	buildFormats.push(umdConfig)
 }
 // iife
 if (!argv.format || argv.format === 'iife') {
-  console.log('iife')
-  const unpkgConfig = {
-    ...baseConfig,
-    external,
-    output: {
-      compact: true,
-      file: 'dist/v-score-ui.min.js',
-      format: 'iife',
-      name: 'Vscore',
-      exports: 'auto',
-      globals
-    },
-    plugins: [
-      replace(baseConfig.plugins.replace),
-      ...baseConfig.plugins.preVue,
-      vue(baseConfig.plugins.vue),
-      ...baseConfig.plugins.postVue,
-      babel(baseConfig.plugins.babel),
-      terser()
-    ]
-  }
-  buildFormats.push(unpkgConfig)
+	console.log('iife')
+	const unpkgConfig = {
+		...baseConfig,
+		external,
+		output: {
+			compact: true,
+			file: 'dist/v-score-ui.min.js',
+			format: 'iife',
+			name: 'Vscore',
+			exports: 'named',
+			globals
+		},
+		plugins: [
+			baseConfig.plugins.resolve,
+			vue(baseConfig.plugins.vue),
+			baseConfig.plugins.typescript,
+			...baseConfig.plugins.preVue,
+			replace(baseConfig.plugins.replace),
+			...baseConfig.plugins.postVue,
+			babel(baseConfig.plugins.babel),
+			commonjs(),
+			terser()
+		]
+	}
+	buildFormats.push(unpkgConfig)
 }
 export default buildFormats
