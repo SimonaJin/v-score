@@ -1,3 +1,5 @@
 export default {
-	getScoreParm:'/score/api/getScoreParm'
+	getScoreParm:'/getScoreParm',
+	getQuestion:'/getQuestion',
+	getScoreSubmit:'/getScoreSubmit'
 }

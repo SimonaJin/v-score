@@ -20,12 +20,13 @@ export const Modalbox = {
     initModal(Vue)
   }
 }
-
-export default {
+export const init = initModal;
+export default{
   version: '0.1.0', // 导出的对象必须具有 install，才能被 Vue.use() 方法安装
   install,
-  initModal
+  Modalbox
 }
+
 
 
 

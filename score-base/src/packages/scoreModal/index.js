@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import ScoreModal from './scoreModal.vue'
 import * as server from '../../server/index'
+import '@css/reset.scss';
+import '@svg/index.js';
 // Modal构造函数
 const ModalConstructor = Vue.extend(ScoreModal)
 
@@ -24,7 +26,7 @@ const removeDom = (event) => {
 	}
 }
 
-
+// 获取对象
 const getScoreParm = async (parmData) => {
 	try {
 		let result = await server.getScoreParm(parmData);
@@ -47,17 +49,11 @@ export default function (options = {}) {
 	}
 	// 2. 获取对象
 	getScoreParm(parmData).then(res => {
-	
-		// 3. 数据处理
-		// 显示类型
-		instance.type = res.type || 'normal'
-		// 显示标题
-		instance.title = typeof res === 'string' ? res : res.title
-		// 显示内容
-		instance.message = typeof res === 'string' ? res : res.message
-		// 显示位置：top、middle、bottom
-		instance.position = res.position || 'middle'
-		instance.className = res.className || ''
+		let result = res
+		// 3. 数据处理 绑定到实例上
+		Object.keys(result).forEach((key) => {
+			instance[key]= result[key]
+		})
 		// 移除动画完成事件
 		instance.$el.removeEventListener('transitionend', removeDom)
 		//4.将节点添加到文档

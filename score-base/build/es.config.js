@@ -18,18 +18,21 @@ const babelPresetEnvConfig = require('../babel.config')
   .presets.filter((entry) => entry[0] === '@babel/preset-env')[0][1];
 
 const esConfig = {
-	...baseConfig,
+	input:baseConfig.input,
 	external,
 	output: {
 		file: 'dist/v-score-ui.esm.js',
 		format: 'esm',
 		exports: 'named',
+		name:"Vscore",
 		sourcemap: false
 	},
 	plugins: [
-		replace(baseConfig.plugins.replace),
 		vue(baseConfig.plugins.vue),
 		...baseConfig.plugins.postVue,
+		baseConfig.plugins.commonjs, //commonjs
+		baseConfig.plugins.provessEnv,//配置环境变量转换
+		baseConfig.plugins.nodePolyfills,//nodejs
 		babel({
 			...baseConfig.plugins.babel,
 			presets: [
@@ -41,8 +44,9 @@ const esConfig = {
 					}
 				]
 			]
-		}),
-		terser()
+		}),//babel
+		replace(baseConfig.plugins.replace),//打包时替换对应字符串
+		baseConfig.plugins.terser
 	]
 }
 export default esConfig;

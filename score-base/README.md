@@ -23,6 +23,21 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+### 离线安装tar包下载
+1.先用命令下载tar包,获取下载压缩包的地址
+```
+	npm view rollup-plugin-polyfill-node dist.tarball
+```
+2.离线安装：
+- 方法一: wget +下载包url
+```
+wget https://registry.npmjs.org/rollup-plugin-polyfill-node/-/rollup-plugin-polyfill-node-0.11.0.tgz
+```
+- 方法二：离线本地按照
+```
+npm install 相对路径
+```
+
 ## 文件目录
 
 + build --  打包配置文件
@@ -275,19 +290,23 @@ export default {
 ## 数据设计
 ### 只评分
 ```js
-id: 10842
-is_complete: 0
-is_option_random: 0
-is_required: 0
-title: "你有多大可能性将我们推荐给朋友?"
-type: "nps"
-high_legend: "非常愿意"
-low_legend: "肯定不会"
-max: 10
-min: 0
-rating_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-next_question_index: 0
-question_count: 4
-question_id: 10842
-
+id: 10842,
+type: "nps", // 问卷类型 nps ces normal
+channelType:"web", // 问卷渠道 web link wx ios android
+modality: "dialog", //问卷形式 dialog icon
+location: "bottom", // 显示位置 底部中间 bottomCenter 底部右边bottomRight 底部左边 bottomLeft 底部平铺bottomTile 右下 Rightbottom  页面中间 pageCenter
+displayMode: "1",// 以月计算
+disPlayTime: "20", // 以秒计算 暂时20秒默认
+mainColor:"#0A8AF8",//主色 默认16位
+textColor:"#333333",// 文本颜色 默认16位
+bgColor:"#FFFFFF",// 背景色 默认16位 
+title: "你有多大可能性将我们推荐给朋友?", //问卷问题
+high_legend: "非常愿意", // 评分最高值显示
+low_legend: "肯定不会", // 评分最低值显示
+max: 10, //评分最高值
+min: 0, // 评分最低值
+rating_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], //分数范围
+next_question_index: 0,
+question_count: 4,
+question_id: 10842,
 ```

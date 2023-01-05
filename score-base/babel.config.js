@@ -1,4 +1,4 @@
-const devPresets = ['@babel/preset-env']
+const devPresets = ['@vue/cli-plugin-babel/preset','@babel/preset-env']
 const buildPresets = [
 	[
 		'@babel/preset-env',
@@ -30,5 +30,14 @@ switch(process.env.NODE_ENV){
 		break;
 }
 module.exports = {
-	presets:presetsName
+	presets:presetsName,
+	"plugins": [
+    [
+      "component",
+      {
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+      }
+    ]
+  ]
 }

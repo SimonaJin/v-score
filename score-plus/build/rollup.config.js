@@ -8,7 +8,6 @@ import commonjs from '@rollup/plugin-commonjs'
 import babel from '@rollup/plugin-babel'
 // import scss from 'rollup-plugin-scss'
 import minimist from 'minimist'
-import postcss from 'rollup-plugin-postcss'
 import {
 	terser
 } from 'rollup-plugin-terser'
@@ -63,10 +62,6 @@ const baseConfig = {
 			tsconfigOverride: overrides
 		}),
 		postVue: [
-			postcss({
-				extensions: ['.css', '.scss'],
-				extract: 'index.css'
-			})
 		],
 		babel: {
 			exclude: 'node_modules/**',

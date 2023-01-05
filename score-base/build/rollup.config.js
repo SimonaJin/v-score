@@ -8,7 +8,7 @@ const buildFormats = []
 // 判断不同打包模式
 switch (argv.format) {
 	case 'es':
-		console.log('es')
+		console.log('es',esConfig)
 		buildFormats.push(esConfig)
 		break;
 	case 'cjs':

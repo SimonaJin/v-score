@@ -69,14 +69,14 @@ class HttpRequest {
 	get(url, config = null) {
 		return this.request({
 			method: 'get',
-			url,
+			url:process.env.VUE_APP_API_BASE_URL+url,
 			...config
 		})
 	}
 	post(url, data = {}, config = null) {
 		return this.request({
 			method: 'post',
-			url,
+			url:process.env.VUE_APP_API_BASE_URL+url,
 			data,
 			...config
 		})
